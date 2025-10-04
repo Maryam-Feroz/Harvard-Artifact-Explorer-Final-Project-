@@ -1,0 +1,5 @@
+streamlit
+PyMySQL
+pandas
+sqlalchemy
+requests
