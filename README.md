@@ -1,4 +1,4 @@
-# Harvard Artifact Explorer
+# Harvard Museum Artifact Explorer
 
 This project provides an interactive web application to explore artifacts from the Harvard Art Museums. It uses a modern data stack to extract data from the official Harvard Art Museums API, store it in a MySQL database, and present it through a user-friendly Streamlit interface.
 
