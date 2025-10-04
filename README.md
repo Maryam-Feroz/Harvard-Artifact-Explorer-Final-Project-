@@ -22,5 +22,19 @@ You need to have the following software installed:
 #### Step 1: Clone the Repository
 Clone this repository to your local machine.
 
-```git clone https://github.com/Maryam-Feroz/Harvard-Artifact-Explorer-Final-Project-.git
-cd Harvard-Artifact-Explorer-Final-Project-```
+``` git clone https://github.com/Maryam-Feroz/Harvard-Artifact-Explorer-Final-Project-.git
+cd Harvard-Artifact-Explorer-Final-Project-  
+```
+#### Step 2: Install Dependencies
+Navigate to the project directory and install the necessary Python libraries.
+
+``` pip install -r requirements.txt ```
+
+If you don't have a requirements.txt file, create one with the following content:
+```
+streamlit
+mysql-connector-python
+pandas
+sqlalchemy
+requests
+```
