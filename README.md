@@ -1,51 +1,55 @@
-# Harvard Museum Artifact Explorer
+# Harvard-Artifact-Explorer
+An interactive, end-to-end data exploration platform using the Harvard Art Museums public API and Streamlit.
 
-This project provides an interactive web application to explore artifacts from the Harvard Art Museums. It uses a modern data stack to extract data from the official Harvard Art Museums API, store it in a MySQL database, and present it through a user-friendly Streamlit interface.
+## 🏛 Harvard Artifact Explorer
+This project provides an interactive, end-to-end data exploration platform using the Harvard Art Museums public API. It's built to empower users to dynamically collect, store, and query rich art collections through a simple and intuitive Streamlit web application.
 
-### Features
-* **ETL Pipeline**: Fetches data for various artifact classifications (Paintings, Sculpture, etc.) and loads it into a structured MySQL database.
-* **Secure Credential Management**: Uses Streamlit's native `secrets.toml` file to securely manage database credentials and API keys.
-* **Interactive Interface**: A Streamlit web app that allows you to trigger the data pipeline and view the data.
-* **Data Querying**: Run pre-defined SQL queries directly from the web interface to analyze the artifact data.
-* **Live Data Exploration**: View the contents of the database tables in real-time.
+## ✨ Key Features
+- ETL Pipeline: Fetches up to 12,500 artifact records from the Harvard Art Museum API, transforms the raw JSON data, and stores it in a structured MySQL database.
 
+- Database Integration: Automatically creates and populates three relational tables—`artifact_metadata`, `artifact_media`, and `artifact_colors`—without requiring manual SQL setup.
 
-### Getting Started
+- Dynamic Data Exploration: Through a Streamlit dashboard, users can select different artifact classifications to fetch and insert data in real-time.
 
+- Interactive Query Workspace: The app includes a ready-to-use SQL workspace with over 25 predefined queries. This allows users to analyze the collected data in real-time and explore various aspects of the art collection.
+
+- Secure Configuration: All sensitive information, such as the MySQL credentials and API keys, is managed securely using Streamlit's `secrets.toml` file.
+
+## 🚀 Getting Started
 Follow these steps to set up and run the application on your local machine.
 
-#### Prerequisites
+### Prerequisites
 You need to have the following software installed:
-* **Python 3.10+**
-* **MySQL Database** (and the MySQL service running)
 
-#### Step 1: Clone the Repository
-Clone this repository to your local machine.
+- Python 3.10+
 
-``` git clone https://github.com/Maryam-Feroz/Harvard-Artifact-Explorer-Final-Project-.git
-cd Harvard-Artifact-Explorer-Final-Project-  
+- MySQL Database (and the MySQL service running)
+
+- Git
+
+### Step 1: Clone the Repository
+Clone this repository to your local machine:
 ```
-#### Step 2: Install Dependencies
+git clone https://github.com/NeoNethereal/Harvard-Artifact-Explorer.git
+cd Harvard-Artifact-Explorer
+```
+
+### Step 2: Install Dependencies
 Navigate to the project directory and install the necessary Python libraries.
 
-``` pip install -r requirements.txt ```
-
-If you don't have a requirements.txt file, create one with the following content:
 ```
-streamlit
-mysql-connector-python
-pandas
-sqlalchemy
-requests
+pip install -r requirements.txt
 ```
-#### Step 3: Configure Your Secrets
-To connect to the database and the Harvard API, you need to set up a secrets.toml file.
 
-1) Create a new folder named .streamlit in the project's root directory.
+### Step 3: Configure Your Secrets
+- To connect to the database and the Harvard API, you must set up a `secrets.toml` file.
 
-2) Inside the .streamlit folder, create a new file named secrets.toml.
+- Create a new folder named `.streamlit` in the project's root directory.
 
-3) Copy and paste the following content into secrets.toml, and replace the placeholder values with your own MySQL credentials.
+- Inside the `.streamlit` folder, create a new file named `secrets.toml`.
+
+- Copy and paste the following content into the file, replacing the placeholder values with your own MySQL credentials.
+
 ```
 [mysql]
 host="127.0.0.1"
@@ -56,14 +60,31 @@ database="harvard_artifacts"
 [harvard]
 api_key="your_harvard_api_key"
 ```
-#### Step 4: Run the Application
+
+### Step 4: Run the Application
 From the project's root directory, start the Streamlit application using your terminal.
-```nstreamlit run harvard3.py ```
-The application will automatically open in your default web browser at ``` http://localhost:8501. ```
 
-#### Usage
-* Fetch & Insert Data: Use the sidebar to select an artifact classification. Click the "Fetch & Insert Data" button to call the Harvard API and populate your local MySQL database.
+`streamlit run project.py`
 
-* View Database Tables: Select a table from the dropdown menu and click "Show Table Data" to view the raw data stored for the selected artifact classification.
+The application will automatically open in your default web browser at `http://localhost:8501`.
 
-* Query & Visualization: Choose one of the pre-built queries from the dropdown list. Click "Run Query" to execute the query and see the results displayed in a table. Some queries require you to enter an ID or a department name before running.
+## 📝 Usage
+- Fetch & Insert Data: Use the sidebar to select an artifact classification. Click the "Fetch & Insert Data" button to call the Harvard API and populate your local MySQL database.
+
+- View Database Tables: Select a table from the dropdown menu and click "Show Table Data" to view the raw data stored for the selected artifact classification.
+
+- Query & Visualization: Choose one of the pre-built queries from the dropdown list. Click "Run Query" to execute the query and see the results displayed in a table. Some queries require you to enter an ID or a department name before running.
+
+## 🤝 Contributing
+Contributions are welcome! If you'd like to contribute, please follow the standard GitHub workflow:
+
+- Fork this repository.
+
+- Create a new branch for your feature or bug fix.
+
+- Commit your changes and push them to your branch.
+
+- Open a pull request to the main branch.
+
+Please ensure your code follows the project's style and includes relevant documentation.
+
