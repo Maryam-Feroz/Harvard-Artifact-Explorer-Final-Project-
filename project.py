@@ -217,75 +217,121 @@ with tab3:
 
         selected_query = st.selectbox("✨ Select a Pre-built Query", query_options)
 
-        query = ""
-        params = None
-        run_query = False
+    query = ""
+    params = None
+    run_query = False
 
-        if selected_query != query_options[0]:
-            if selected_query == query_options[19]:
-                artifact_id = st.number_input("Enter Artifact ID", min_value=1, value=1)
-                query = "SELECT color, hue, percent FROM artifact_colors WHERE objectid = %s;"
-                params = (artifact_id,)
-            elif selected_query == query_options[22]:
-                department_name = st.text_input("Enter Department Name", value="Drawings")
-                query = "SELECT id, title, culture FROM artifact_metadata WHERE department = %s;"
-                params = (department_name,)
+    if selected_query != query_options[0]:
 
-            if st.button("🚀 Run Query"):
-                if selected_query == query_options[1]:
-                    query = "SELECT * FROM artifact_metadata WHERE century='11th century' AND culture='Byzantine';"
-                elif selected_query == query_options[2]:
-                    query = "SELECT DISTINCT culture FROM artifact_metadata WHERE culture IS NOT NULL;"
-                elif selected_query == query_options[3]:
-                    query = "SELECT * FROM artifact_metadata WHERE period='Archaic';"
-                elif selected_query == query_options[4]:
-                    query = "SELECT title, accessionyear FROM artifact_metadata ORDER BY accessionyear DESC;"
-                elif selected_query == query_options[5]:
-                    query = "SELECT department, COUNT(*) as artifact_count FROM artifact_metadata GROUP BY department;"
-                elif selected_query == query_options[6]:
-                    query = "SELECT m.title FROM artifact_metadata m JOIN artifact_media md ON m.id = md.objectid WHERE md.imagecount > 1;"
-                elif selected_query == query_options[7]:
-                    query = "SELECT AVG(rank_value) as avg_rank FROM artifact_media;"
-                elif selected_query == query_options[8]:
-                    query = "SELECT m.title FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid WHERE md.colorcount > md.mediacount;"
-                elif selected_query == query_options[9]:
-                    query = "SELECT * FROM artifact_metadata m JOIN artifact_media md on m.id = md.objectid WHERE md.datebegin BETWEEN 1500 AND 1600;"
-                elif selected_query == query_options[10]:
-                    query = "SELECT m.title, c.hue FROM artifact_metadata m JOIN artifact_colors c ON m.id=c.objectid WHERE m.culture='Byzantine';"
-                elif selected_query == query_options[11]:
-                    query = "SELECT m.title, GROUP_CONCAT(c.hue SEPARATOR ', ') as Hues FROM artifact_metadata m JOIN artifact_colors c ON m.id=c.objectid GROUP BY m.id, m.title;"
-                elif selected_query == query_options[12]:
-                    query = "SELECT title, culture, rank_value FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid WHERE m.period IS NOT NULL;"
-                elif selected_query == query_options[13]:
-                    query = "SELECT m.title FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid JOIN artifact_colors c ON m.id=c.objectid WHERE c.hue='Grey' ORDER BY md.rank_value DESC LIMIT 10;"
-                elif selected_query == query_options[14]:
-                    query = "SELECT classification, COUNT(*) as artifact_count, AVG(mediacount) as avg_media FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid GROUP BY classification;"
-                elif selected_query == query_options[15]:
-                    query = "SELECT COUNT(*) as artifacts_no_media FROM artifact_media WHERE mediacount=0;"
-                elif selected_query == query_options[16]:
-                    query = "SELECT DISTINCT hue FROM artifact_colors;"
-                elif selected_query == query_options[17]:
-                    query = "SELECT color, COUNT(*) as frequency FROM artifact_colors GROUP BY color ORDER BY frequency DESC LIMIT 5;"
-                elif selected_query == query_options[18]:
-                    query = "SELECT hue, AVG(percent) as avg_percent FROM artifact_colors GROUP BY hue;"
-                elif selected_query == query_options[20]:
-                    query = "SELECT COUNT(*) as total_color_entries FROM artifact_colors;"
-                elif selected_query == query_options[21]:
-                    query = "SELECT * FROM artifact_metadata WHERE accessionmethod LIKE '%purchase%';"
-                elif selected_query == query_options[23]:
-                    query = "SELECT * FROM artifact_metadata WHERE description IS NULL;"
-                elif selected_query == query_options[24]:
-                    query = "SELECT * FROM artifact_metadata ORDER BY id;"
-                elif selected_query == query_options[25]:
-                    query = "SELECT COUNT(*) as artifacts_with_period FROM artifact_metadata WHERE period IS NOT NULL;"
+        if selected_query == query_options[19]:
+           # Fetch artifact IDs and titles from the database
+           artifact_list = pd.read_sql("SELECT id, title FROM artifact_metadata ORDER BY id LIMIT 100;", engine)
+    
+           # Create a selectbox to choose an artifact
+           selected_artifact = st.selectbox(
+           "Select Artifact (ID - Title)",
+           artifact_list.apply(lambda row: f"{row['id']} - {row['title']}", axis=1)
+           )
+    
+           # Extract the ID from the selected option
+           artifact_id = int(selected_artifact.split(" - ")[0])
+    
+           # Prepare the query
+           query = "SELECT color, hue, percent FROM artifact_colors WHERE objectid = %s;"
+           params = (artifact_id,)
 
-                if query:
-                    run_query = True
+        
+        elif selected_query == query_options[22]:
+           # Fetch distinct departments from the database
+           dept_list = pd.read_sql("SELECT DISTINCT department FROM artifact_metadata WHERE department IS NOT NULL;", engine)
+    
+           # Create a selectbox to choose a department
+           selected_department = st.selectbox(
+           "Select Department",
+           dept_list["department"].tolist()
+           )
+    
+           # Prepare the query
+           query = "SELECT id, title, culture FROM artifact_metadata WHERE department = %s;"
+           params = (selected_department,)
 
-        if run_query and query:
-            try:
-                df_query = pd.read_sql(query, engine, params=params)
-                st.success(f"✅ Query executed successfully! Rows returned: {len(df_query)}")
-                st.dataframe(df_query)
-            except Exception as e:
-                st.error(f"Query failed: {e}")
+        if st.button("🚀 Run Query"):
+
+            if selected_query == query_options[1]:
+                query = "SELECT * FROM artifact_metadata WHERE century='11th century' AND culture='Byzantine';"
+                params = None
+            elif selected_query == query_options[2]:
+                query = "SELECT DISTINCT culture FROM artifact_metadata WHERE culture IS NOT NULL;"
+                params = None
+            elif selected_query == query_options[3]:
+                query = "SELECT * FROM artifact_metadata WHERE period='Archaic';"
+                params = None
+            elif selected_query == query_options[4]:
+                query = "SELECT title, accessionyear FROM artifact_metadata ORDER BY accessionyear DESC;"
+                params = None
+            elif selected_query == query_options[5]:
+                query = "SELECT department, COUNT(*) as artifact_count FROM artifact_metadata GROUP BY department;"
+                params = None
+            elif selected_query == query_options[6]:
+                query = "SELECT m.title FROM artifact_metadata m JOIN artifact_media md ON m.id = md.objectid WHERE md.imagecount > 1;"
+                params = None
+            elif selected_query == query_options[7]:
+                query = "SELECT AVG(rank_value) as avg_rank FROM artifact_media;"
+                params = None
+            elif selected_query == query_options[8]:
+                query = "SELECT m.title FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid WHERE md.colorcount > md.mediacount;"
+                params = None
+            elif selected_query == query_options[9]:
+                query = "SELECT * FROM artifact_metadata m JOIN artifact_media md on m.id = md.objectid WHERE md.datebegin BETWEEN 1500 AND 1600;"
+                params = None
+            elif selected_query == query_options[10]:
+                query = "SELECT m.title, c.hue FROM artifact_metadata m JOIN artifact_colors c ON m.id=c.objectid WHERE m.culture='Byzantine';"
+                params = None
+            elif selected_query == query_options[11]:
+                query = "SELECT m.title, GROUP_CONCAT(c.hue SEPARATOR ', ') as Hues FROM artifact_metadata m JOIN artifact_colors c ON m.id=c.objectid GROUP BY m.id, m.title;"
+                params = None
+            elif selected_query == query_options[12]:
+                query = "SELECT title, culture, rank_value FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid WHERE m.period IS NOT NULL;"
+                params = None
+            elif selected_query == query_options[13]:
+                query = "SELECT m.title FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid JOIN artifact_colors c ON m.id=c.objectid WHERE c.hue='Grey' ORDER BY md.rank_value DESC LIMIT 10;"
+                params = None
+            elif selected_query == query_options[14]:
+                query = "SELECT classification, COUNT(*) as artifact_count, AVG(mediacount) as avg_media FROM artifact_metadata m JOIN artifact_media md ON m.id=md.objectid GROUP BY classification;"
+                params = None
+            elif selected_query == query_options[15]:
+                query = "SELECT COUNT(*) as artifacts_no_media FROM artifact_media WHERE mediacount=0;"
+                params = None
+            elif selected_query == query_options[16]:
+                query = "SELECT DISTINCT hue FROM artifact_colors;"
+                params = None
+            elif selected_query == query_options[17]:
+                query = "SELECT color, COUNT(*) as frequency FROM artifact_colors GROUP BY color ORDER BY frequency DESC LIMIT 5;"
+                params = None
+            elif selected_query == query_options[18]:
+                query = "SELECT hue, AVG(percent) as avg_percent FROM artifact_colors GROUP BY hue;"
+                params = None
+            elif selected_query == query_options[20]:
+                query = "SELECT COUNT(*) as total_color_entries FROM artifact_colors;"
+                params = None
+            elif selected_query == query_options[21]:
+                query = "SELECT * FROM artifact_metadata WHERE accessionmethod LIKE '%%purchase%%';"
+                params = None
+            elif selected_query == query_options[23]:
+                query = "SELECT * FROM artifact_metadata WHERE description IS NULL;"
+                params = None
+            elif selected_query == query_options[24]:
+                query = "SELECT * FROM artifact_metadata ORDER BY id;"
+                params = None
+            elif selected_query == query_options[25]:
+                query = "SELECT COUNT(*) as artifacts_with_period FROM artifact_metadata WHERE period IS NOT NULL;"
+                params = None
+
+            # Run the query
+            if query:
+                try:
+                    df_query = pd.read_sql(query, engine, params=params)
+                    st.success(f"✅ Query executed successfully! Rows returned: {len(df_query)}")
+                    st.dataframe(df_query)
+                except Exception as e:
+                    st.error(f"Query failed: {e}")
